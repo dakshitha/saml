@@ -2,6 +2,16 @@
 
 This repository provides a simple SAML Service Provider (SP) setup to interact with ZITADEL as the Identity Provider (IdP). The application is built using Flask and the `pysaml2` library.
 
+We will be testing out the SP-Initiated SAML Flow
+
+In an SP-initiated flow, the process begins with the service provider (SP) redirecting the user to the identity provider (IdP) for authentication. The steps include:
+
+1. User Requests Access: The user attempts to access a resource at the SP.
+2. SP Redirects to IdP: The SP redirects the user to the IdP for authentication.
+3. IdP Authenticates User: The user authenticates at the IdP.
+4. IdP Sends SAML Response: The IdP sends a SAML response back to the SP.
+5. SP Grants Access: The SP processes the SAML response and grants the user access.
+
 ## Prerequisites
 
 - Python 3.x
