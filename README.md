@@ -41,6 +41,7 @@ sudo apt-get install xmlsec1
 #### macOS
 
 ```bash
+brew install libxml2 libxslt
 brew install libxmlsec1
 ```
 
