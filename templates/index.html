@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAML SP</title>
+</head>
+<body>
+    <h1>Welcome to the SAML SP!</h1>
+    <form action="/generate_saml_request" method="post">
+        <button type="submit">Generate SAML Request</button>
+    </form>
+    <form action="/sso" method="post">
+        <textarea name="saml_request" id="saml_request" rows="10" cols="100">{{ saml_request }}</textarea><br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
