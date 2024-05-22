@@ -56,7 +56,7 @@ You need to create a SAML app in your ZITADEL instance and upload the `sp_metada
 2. Navigate to the **Applications** section.
 3. Create a new **SAML Application**.
 4. Upload the `sp_metadata.xml` file.
-5. Obtain the IdP metadata URL or file from ZITADEL and replace the content of `idp_metadata.xml` with the provided IdP metadata.
+5. Obtain the IdP metadata URL file (https://<your-ZITADEL-domain>/saml/metadata) from ZITADEL and replace the content of `idp_metadata.xml` with the provided IdP metadata.
 
 ### 5. Configuration
 
