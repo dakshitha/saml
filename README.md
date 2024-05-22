@@ -8,6 +8,7 @@ This repository provides a simple SAML Service Provider (SP) setup to interact w
 - Flask
 - pysaml2
 - Flask-CORS
+- xmlsec1 (XML Security Library)
 
 ## Setting Up
 
@@ -28,7 +29,26 @@ source venv/bin/activate
 pip install Flask pysaml2 Flask-CORS
 ```
 
-### 3. ZITADEL Configuration
+### 3. Install xmlsec1
+
+#### Ubuntu/Debian
+
+```bash
+sudo apt-get update
+sudo apt-get install xmlsec1
+```
+
+#### macOS
+
+```bash
+brew install libxmlsec1
+```
+
+#### Windows
+
+Download and install `xmlsec1` from [XMLSec Tool](https://www.aleksey.com/xmlsec/download.html).
+
+### 4. ZITADEL Configuration
 
 You need to create a SAML app in your ZITADEL instance and upload the `sp_metadata.xml` file found in this repository. Follow these steps:
 
@@ -38,7 +58,7 @@ You need to create a SAML app in your ZITADEL instance and upload the `sp_metada
 4. Upload the `sp_metadata.xml` file.
 5. Obtain the IdP metadata URL or file from ZITADEL and replace the content of `idp_metadata.xml` with the provided IdP metadata.
 
-### 4. Configuration
+### 5. Configuration
 
 Ensure the paths in the `app.py` file for `key_file`, `cert_file`, and `xmlsec_binary` are correct.
 
@@ -73,8 +93,28 @@ The application should now be running on `http://127.0.0.1:5000`.
 ### Notes
 
 - Ensure the `xmlsec1` binary is installed and its path is correctly specified in `app.py`.
-- Keep the `sp-key.pem` file secure and do not share it publicly.
+- **Keep the `sp-key.pem` file secure and do not share it publicly.**
 
-## License
+#### Generating Your Own `sp-key.pem` and `sp-cert.pem`
 
-This project is licensed under the MIT License.
+If you want to generate your own `sp-key.pem` and `sp-cert.pem` files, you can use the following OpenSSL commands:
+
+1. Generate the private key:
+
+    ```bash
+    openssl genpkey -algorithm RSA -out sp-key.pem -aes256
+    ```
+
+2. Generate the certificate signing request (CSR):
+
+    ```bash
+    openssl req -new -key sp-key.pem -out sp-csr.pem
+    ```
+
+3. Generate the self-signed certificate:
+
+    ```bash
+    openssl req -x509 -key sp-key.pem -in sp-csr.pem -out sp-cert.pem -days 365
+    ```
+
+    Replace `-days 365` with the desired validity period for the certificate.
