@@ -26,7 +26,7 @@ Make sure you have Python 3 installed. Then, create a virtual environment and in
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install Flask pysaml2 Flask-CORS
+pip3 install Flask pysaml2 Flask-CORS
 ```
 
 ### 3. Install xmlsec1
