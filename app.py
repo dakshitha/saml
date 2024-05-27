@@ -13,6 +13,9 @@ CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
+# Initialize outstanding queries dictionary
+outstanding_queries = {}
+
 # SAML Configuration
 def saml_client():
     config = Saml2Config()
@@ -28,6 +31,9 @@ def saml_client():
                 },
                 'required_attributes': ['uid'],
                 'optional_attributes': ['mail'],
+                'authn_requests_signed': True,  # Ensure authentication requests are signed
+                'want_assertions_signed': True,  # Ensure assertions are signed
+                'want_response_signed': False,  # Do not require the entire response to be signed
             },
         },
         'metadata': {
@@ -50,11 +56,13 @@ def index():
 def generate_saml_request():
     client = saml_client()
     reqid, info = client.prepare_for_authenticate()
+    session['request_id'] = reqid  # Store the request ID in the session
     location_header = dict(info['headers'])['Location']
     parsed_url = urlparse(location_header)
     saml_request = parse_qs(parsed_url.query)['SAMLRequest'][0]
     logging.debug(f"SAML Request: {saml_request}")
     session['saml_request'] = saml_request
+    outstanding_queries[reqid] = 'http://127.0.0.1:5000/acs'  # Map request ID to the ACS URL
     return redirect('/')
 
 @app.route('/sso', methods=['POST'])
@@ -73,7 +81,10 @@ def acs():
     saml_response = request.form['SAMLResponse']
     logging.debug(f"SAML Response: {saml_response}")
     try:
-        authn_response = client.parse_authn_request_response(saml_response, BINDING_HTTP_POST)
+        request_id = session.pop('request_id', None)  # Get the request ID from the session
+        if request_id is None:
+            raise ValueError("No request ID found in session")
+        authn_response = client.parse_authn_request_response(saml_response, BINDING_HTTP_POST, outstanding_queries)
         session['user_info'] = authn_response.get_identity()
         logging.debug(f"User Info: {session['user_info']}")
         return render_template('response.html', saml_response=saml_response, user_info=session['user_info'])
@@ -87,4 +98,3 @@ def acs():
 
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1')
-
